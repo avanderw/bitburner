@@ -1,0 +1,6 @@
+target/
+node_modules/
+.vscode
+.prettierrc
+.eslintrc.js
+package-lock.json
