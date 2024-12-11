@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 /**
  * 
 You are given the following array of integers:

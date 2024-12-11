@@ -10,7 +10,7 @@
  * Return the ciphertext as uppercase string. Spaces remains the same.
  */
 
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     const data = ["MEDIA TRASH INBOX QUEUE MODEM", 2];

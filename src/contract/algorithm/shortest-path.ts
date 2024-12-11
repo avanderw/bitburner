@@ -32,7 +32,7 @@ Answer: ''
 
  */
 
-import { NS } from "@ns";
+import { NS } from '/lib/NetscriptDefinitions';
 
 export function main(ns: NS): void {
     let grid = [

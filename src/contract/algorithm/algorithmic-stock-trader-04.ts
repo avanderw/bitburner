@@ -10,7 +10,7 @@
  * If no profit can be made, then the answer should be 0.
  */
 
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     ns.tprintf("%s", stockTrader04([9, [24,83,96,191,60,104,86,24,87,19,113,146,110,88,149,193,44,111,153,199,190,18,140,170,146,7,116,90,28,92,163,86,136,134,6,60,146,74,77,191,176]]));

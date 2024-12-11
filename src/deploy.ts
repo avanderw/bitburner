@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import {NS} from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     if (ns.args.length === 0) {

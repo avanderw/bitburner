@@ -1,10 +1,10 @@
 
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 
 export async function main(ns: NS) {
     const catalogue = serverCatalogue(ns);
-    ns.tprintf("\n"+formatTable(catalogue));
+    ns.tprintf(formatTable(catalogue));
     ns.tprintf("%s servers", catalogue.length);
     ns.tprintf("\n");
 }

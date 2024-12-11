@@ -1,17 +1,17 @@
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export async function main(ns: NS) {
     const contracts = findContracts(ns);
     let displayLimit = Math.min(13, contracts.length);
-    if (contracts.length > 0) {
-        ns.tprintf("\n" + formatTable(contracts.slice(0, displayLimit)));
-        
-        const typeBucket = frequency(contracts, "type");
-        displayLimit = Math.min(8, Object.keys(typeBucket).length);
-        ns.tprintf("\n" + formatTable(Object.keys(typeBucket).map(k => ({ type: k, count: typeBucket[k], example: path(contracts.find(c => c.type === k)) })).sort((a, b) => a.type.localeCompare(b.type)).slice(0, displayLimit)));
-    } else {
-        ns.tprintf("No contracts found");
-    }
+    ns.tprintf(formatTable(contracts.slice(0, displayLimit)));
+    ns.tprintf("Showing %s of %s files", displayLimit, contracts.length);
+    ns.tprintf("\n");
+
+    const typeBucket = frequency(contracts, "type");
+    displayLimit = Math.min(8, Object.keys(typeBucket).length);
+    ns.tprintf(formatTable(Object.keys(typeBucket).map(k => ({ type: k, count: typeBucket[k], example: path(contracts.find(c=>c.type === k)) })).sort((a, b) => a.type.localeCompare(b.type)).slice(0, displayLimit)));
+    ns.tprintf("Showing %s of %s types", displayLimit, Object.keys(typeBucket).length);
+    ns.tprintf("\n");
 }
 
 function path(contract: any): string {
@@ -42,38 +42,26 @@ function findContracts(ns: NS): any[] {
     return contracts;
 }
 
-// v2023-04-07
-function formatTable(obj: any[], limit = 0): string {
+function formatTable(obj: any[]): string {
     if (obj.length === 0) {
         return "";
     }
-    const NUMBER_FORMAT = new Intl.NumberFormat("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const NUMBER_FORMAT = new Intl.NumberFormat("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     const colums = Object.keys(obj[0]);
     const rows = obj.map(o => Object.values(o));
-    const widths = colums.map((c, i) => Math.max(c.length, Math.max(...rows.map(r => typeof r[i] === 'number'
-        ? NUMBER_FORMAT.format(r[i] as number).length
-        : stringLen((r[i] as object).toString())))));
-    const borderTop = "┌" + widths.map(w => "─".repeat(w)).join("─┬─") + "┐";
-    const header = "│" + colums.map((c, i) => c.toUpperCase().padEnd(widths[i])).join(" │ ") + "│";
-    const divider = "├" + widths.map(w => "─".repeat(w)).join("─┼─") + "┤";
-    const borderBottom = "└" + widths.map(w => "─".repeat(w)).join("─┴─") + "┘";
-    const body = rows.slice(limit).map(
-        r => "│" + r.map(
-            (v, i) => typeof v === 'number' ? NUMBER_FORMAT.format(v).padStart(widths[i]) : (v as object).toString()
-                .padStart((v as object).toString().indexOf("%%") !== -1 ? widths[i] + 1 : widths[i])
-        ).join(" │ ") + "│"
+    const widths = colums.map((c, i) => Math.max(c.length, Math.max(...rows.map(r => typeof r[i] === 'number' ? NUMBER_FORMAT.format(r[i] as number).length : (r[i] as object).toString().length))));
+    const borderTop = widths.map(w => "─".repeat(w)).join("─┬─");
+    const header = colums.map((c, i) => c.padEnd(widths[i])).join(" │ ");
+    const divider = widths.map(w => "─".repeat(w)).join("─┼─");
+    const borderBottom = widths.map(w => "─".repeat(w)).join("─┴─");
+    const body = rows.map(
+        r => r.map(
+            (v, i) => typeof v === 'number' ? NUMBER_FORMAT.format(v).padStart(widths[i]) : (v as object).toString().padEnd(widths[i])
+        ).join(" │ ")
     ).join("\n");
-    const summary = `Showing ${limit === 0 ? rows.length : limit} of ${rows.length} rows`;
-    return borderTop + "\n" + header + "\n" + divider + "\n" + body + "\n" + borderBottom + "\n" + summary;
+    return borderTop + "\n" + header + "\n" + divider + "\n" + body + "\n" + borderBottom;
 }
 
-// v2023-04-07
-function stringLen(str: string): number {
-    return str.replaceAll(/%%/g, " ")
-        .replaceAll(/\x1b\[38;5;\d+m/g, "")
-        .replaceAll(/\x1b\[0m/g, "")
-        .length;
-}
 
 function traverseNet(ns: NS): string[] {
     const process = ["home"];

@@ -26,7 +26,7 @@ Examples (some have other possible encodings of minimal length):
     aaaaaaaaaaaaaa  ->  1a91041
  */
 
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     let input = "v8jjjjjjjjjjjjjjjjjA1sjA1sjA1sjSjAnSjAAnSjAj6IrnSjAj6Ifmpzblpzblm5zblpzU5zblpzU5ZXsp";

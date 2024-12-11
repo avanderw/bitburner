@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     ns.tprintf("%s", stockTrader03([196,8,175,130,128,120,43,151,8,133,163,50,71,115,6,158,194,82,98,171]));

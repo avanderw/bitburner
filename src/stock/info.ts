@@ -1,9 +1,5 @@
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 import { cyan, magenta, plot, red } from "/stock/asciichart"
-
-export function autocomplete(ns: NS, args: string[]): string[] {
-    return ["ECP","MGCP","BLD","CLRK","OMTK","FSIG","KGI","FLCM","STM","DCOMM","HLS","VITA","ICRS","UNV","AERO","OMN","SLRS","GPH","NVMD","WDS","LXO","RHOC","APHE","SYSC","CTK","NTLK","OMGA","FNS","JGN","SGC","CTYS","MDYN","TITN"];
-}
 
 export function main(ns: NS): void {
     const stocks:any[] = [];

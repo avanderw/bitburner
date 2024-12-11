@@ -13,7 +13,7 @@
  * There should be no leading zeros in the 'data bit' section
  */
 
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     ns.tprintf(test(1, "1111"));

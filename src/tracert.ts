@@ -1,5 +1,5 @@
 
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function autocomplete(data: any) {
     return [...data.servers];
@@ -16,29 +16,7 @@ export function main(ns: NS): void {
         ns.tprintf("Unable to resolve %s", ns.args[0] as string);
         return;
     }
-
-    const ansiRed = "\x1b[31m";
-    const ansiYellow = "\x1b[33m";
-    const ansiGreen = "\x1b[32m";
-    const ansiReset = "\x1b[0m";
-    ns.tprintf(hops.map(s => ns.getServer(s))
-        .map(s => {
-            let color = ansiRed;
-            let name = s.hostname;
-            if (s.backdoorInstalled) {
-                color = ansiGreen;
-                name += " (backdoor)";
-            } else if (s.hasAdminRights) {
-                color = ansiYellow;
-                name += " (admin)";
-            }
-            return color + name + ansiReset;
-        })
-        .reduce((a, b, i) => a + "\n" + " ".repeat(i) + "-> " + b, ansiGreen + "\nhome" + ansiReset));
-
-    const command = hops.map(s=>"connect " + s).join(";");
-    ns.tprintf(`\x1b[38;5;6m\nCopied to clipboard, Ctrl+V to paste...\x1b[0m`);
-    window.navigator.clipboard.writeText(command);
+    ns.tprintf(hops.reduce((a, b, i) => a + "\n" + " ".repeat(i) + "-> " + b, "home"));
 }
 
 function tracert(ns: NS, to: string, from: string, seen: string[]): string[] {

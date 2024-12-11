@@ -1,7 +1,4 @@
-/**
- * MUST change ordering to include grow
- */
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function autocomplete(data: any) {
     return [...data.servers];
@@ -24,7 +21,7 @@ export function main(ns: NS): void {
             });
         }
 
-        ns.tprintf("\n"+formatTable(servers));
+        ns.tprintf(formatTable(servers));
     } else {
         const s: any[] = traverseNet(ns)
             .filter(s => ns.getServerMaxMoney(s) !== 0)
@@ -46,9 +43,9 @@ export function main(ns: NS): void {
                 }
             })
             .sort((a, b) => a.takePerSec - b.takePerSec);
-        ns.tprintf("\n"+formatTable(s.filter(s => s.action === "weaken")));
-        ns.tprintf("\n"+formatTable(s.filter(s => s.action === "grow")));
-        ns.tprintf("\n"+formatTable(s.filter(s => s.action === "hack")));
+        ns.tprintf(formatTable(s.filter(s => s.action === "weaken")));
+        ns.tprintf(formatTable(s.filter(s => s.action === "grow")));
+        ns.tprintf(formatTable(s.filter(s => s.action === "hack")));
     }
 }
 

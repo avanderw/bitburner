@@ -1,19 +1,14 @@
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 
 export async function main(ns: NS) {
-    ns.disableLog("ALL");
-    if (ns.getPurchasedServers().length === 0) {
-        ns.printf("No servers purchased to upgrade");
-        return;
-    }
-    
     const upgraded = upgradeServers(ns);
     if (upgraded.length > 0) {
-        ns.printf("\n"+formatTable(upgraded));
+        ns.tprintf(formatTable(upgraded));
     } else {
-        ns.printf("No servers upgraded");
+        ns.tprintf("No servers upgraded");
     }
+    ns.tprintf("\n");
 }
 
 function upgradeServers(ns: NS): any[] {
@@ -33,6 +28,7 @@ function upgradeServers(ns: NS): any[] {
             new: upgrade
         }
 
+        ns.print(`Upgrading ${host.host} from ${host.old} to ${host.new}`);
         if (host.new > host.old) {
             ns.killall(host.host);
             ns.deleteServer(host.host);
@@ -80,5 +76,5 @@ function uuid4() {
         let r = (Math.random() * 16) | 0,
             v = c == "x" ? r : (r & 0x3) | 0x8;
         return v.toString(16);
-    }).substring(0, 8);
+    });
 }

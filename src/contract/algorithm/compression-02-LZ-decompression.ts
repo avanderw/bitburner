@@ -23,7 +23,7 @@
  *     5aaabb450723abb  ->  aaabbaaababababaabb
  */
 
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     ns.tprintf("Expected %s\n     got %s", "aaabbaaababababaabb", decode("5aaabb450723abb"));

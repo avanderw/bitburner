@@ -11,7 +11,7 @@ IMPORTANT: The string may contain letters, not just parentheses. Examples:
 ")(" -> [""]
  */
 
-import { NS } from "@ns";
+import { NS } from '/lib/NetscriptDefinitions';
 
 export function main(ns: NS): void {
     let input = '()())()';

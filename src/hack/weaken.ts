@@ -3,67 +3,38 @@
  * SHOULD be smarter with weaken times when targeting all servers
  */
 
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function autocomplete(data: any) {
     return [...data.servers];
 }
 
 export async function main(ns: NS): Promise<void> {
-    ns.disableLog("ALL");
     if (ns.args.length === 0) {
         const servers = traverseNet(ns)
             .filter(s => ns.getServerSecurityLevel(s) > ns.getServerMinSecurityLevel(s))
             .filter(s => ns.hasRootAccess(s))
-            .filter(s => getHackStatus(ns, s) === "idle")
             .map(s => ({
                 server: s,
-                time: ns.tFormat(ns.getWeakenTime(s)),
-                "take/s": ns.hackAnalyzeChance(s) * ns.getServerMaxMoney(s) / ns.getWeakenTime(s) || "0",
-            })).sort((a, b) => a["take/s"] as number - (b["take/s"] as number)).reverse()
-            .map(s => {
-                s["take/s"] = "$" + ns.formatNumber(s["take/s"] as number).padStart(8);
-                return s;
-            });
-
-        if (servers.length === 0) {
-            return;
-        }
-
-        ns.printf("Weakening...\n"+formatTable(servers));
+                action: "weaken",
+                take: ns.hackAnalyzeChance(s) * ns.getServerMaxMoney(s),
+                time: ns.getWeakenTime(s),
+                takePerSec: ns.hackAnalyzeChance(s) * ns.getServerMaxMoney(s) / ns.getWeakenTime(s)
+            })).sort((a, b) => a.takePerSec - b.takePerSec)
+            .reverse();
+        ns.tprintf(formatTable(servers));
+        ns.tprintf(`Weakening ${servers.length} servers`);
         const useHome = ns.getServerMaxRam("home") > Math.pow(2, 13);
-        for (const s of servers) {
-            await weaken(ns, s.server, useHome);
+        for (const server of servers) {
+            await weaken(ns, server.server, useHome);
         }
     } else {
-        for (const s of ns.args) {
-            await weaken(ns, s as string, true);
+        for (const server of ns.args) {
+            await weaken(ns, server as string, true);
         }
     }
 }
 
-// v1.0.0
-function getHackStatus(ns: NS, target: string): string {
-    let status: string;
-    if (ns.isRunning("/hack/hack-daemon.js", "home", target)) {
-        status = "hacking";
-    } else if (ns.isRunning("/hack/hack-daemon.js", "home", target, "--use-home")) {
-        status = "hacking";
-    } else if (ns.isRunning("/hack/weaken-thread.js", "home", target)) {
-        status = "weakening";
-    } else if (ns.isRunning("/hack/weaken-thread.js", "home", target, "--use-home")) {
-        status = "weakening";
-    } else if (ns.isRunning("/hack/grow-thread.js", "home", target)) {
-        status = "growing";
-    } else if (ns.isRunning("/hack/grow-thread.js", "home", target, "--use-home")) {
-        status = "growing";
-    } else {
-        status = "idle";
-    }
-    return status;
-}
-
-// v1.0.0
 function traverseNet(ns: NS): string[] {
     const process = ["home"];
     const visited: string[] = [];
@@ -81,12 +52,10 @@ function traverseNet(ns: NS): string[] {
     return visited;
 }
 
-// v1.0.0
 function freeRAM(ns: NS, host: string): number {
     return ns.getServerMaxRam(host) - ns.getServerUsedRam(host);
 }
 
-// v1.0.1
 async function weaken(ns: NS, target: string, useHome: boolean) {
     const THREAD = "/hack/weaken-thread.js";
 
@@ -112,9 +81,7 @@ async function weaken(ns: NS, target: string, useHome: boolean) {
                 continue;
             }
 
-            if (host !== "home") {
-                ns.scp(THREAD, host);
-            }
+            ns.scp(THREAD, host);
             ns.exec(THREAD, host, assignThreads, target);
             remainingThreads -= assignThreads;
 
@@ -124,6 +91,7 @@ async function weaken(ns: NS, target: string, useHome: boolean) {
         }
 
         if (remainingThreads > 0) {
+            ns.printf("WARN Not enough RAM to weaken %s by %d threads", target, remainingThreads);
             await ns.sleep(ns.getWeakenTime(target) + 500);
         } else {
             break;
@@ -131,29 +99,22 @@ async function weaken(ns: NS, target: string, useHome: boolean) {
     }
 }
 
-// v1.1.0
-function formatTable(obj: any[], limit = 0): string {
+function formatTable(obj: any[]): string {
     if (obj.length === 0) {
         return "";
     }
-    const NUMBER_FORMAT = new Intl.NumberFormat("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const NUMBER_FORMAT = new Intl.NumberFormat("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
     const colums = Object.keys(obj[0]);
     const rows = obj.map(o => Object.values(o));
-    const widths = colums.map((c, i) => Math.max(c.length, Math.max(...rows.map(r => typeof r[i] === 'number'
-        ? NUMBER_FORMAT.format(r[i] as number).length
-        : (r[i] as object).toString().indexOf("%%") !== -1
-            ? (r[i] as object).toString().length - 1
-            : (r[i] as object).toString().length))));
-    const borderTop = "┌" + widths.map(w => "─".repeat(w)).join("─┬─") + "┐";
-    const header = "│" + colums.map((c, i) => c.toUpperCase().padEnd(widths[i])).join(" │ ") + "│";
-    const divider = "├" + widths.map(w => "─".repeat(w)).join("─┼─") + "┤";
-    const borderBottom = "└" + widths.map(w => "─".repeat(w)).join("─┴─") + "┘";
-    const body = rows.slice(limit).map(
-        r => "│" + r.map(
-            (v, i) => typeof v === 'number' ? NUMBER_FORMAT.format(v).padStart(widths[i]) : (v as object).toString()
-                .padStart((v as object).toString().indexOf("%%") !== -1 ? widths[i] + 1 : widths[i])
-        ).join(" │ ") + "│"
+    const widths = colums.map((c, i) => Math.max(c.length, Math.max(...rows.map(r => typeof r[i] === 'number' ? NUMBER_FORMAT.format(r[i] as number).length : (r[i] as object).toString().length))));
+    const borderTop = widths.map(w => "─".repeat(w)).join("─┬─");
+    const header = colums.map((c, i) => c.padEnd(widths[i])).join(" │ ");
+    const divider = widths.map(w => "─".repeat(w)).join("─┼─");
+    const borderBottom = widths.map(w => "─".repeat(w)).join("─┴─");
+    const body = rows.map(
+        r => r.map(
+            (v, i) => typeof v === 'number' ? NUMBER_FORMAT.format(v).padStart(widths[i]) : (v as object).toString().padEnd(widths[i])
+        ).join(" │ ")
     ).join("\n");
-    const summary = `Showing ${limit === 0 ? rows.length : limit} of ${rows.length} rows`;
-    return borderTop + "\n" + header + "\n" + divider + "\n" + body + "\n" + borderBottom + "\n" + summary;
+    return borderTop + "\n" + header + "\n" + divider + "\n" + body + "\n" + borderBottom;
 }

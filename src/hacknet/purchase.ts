@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export async function main(ns: NS) {
     const MONEY_FORMAT = new Intl.NumberFormat("en-US", {
@@ -23,7 +23,7 @@ export async function main(ns: NS) {
 
     if (totalSpent > 0) {
         const actions = frequency(history, "name");
-        ns.tprintf("\n"+formatTable(Object.keys(actions).map(k => ({ "Purchase": k, "Count": actions[k] }))));
+        ns.tprintf(formatTable(Object.keys(actions).map(k => ({ "Purchase": k, "Count": actions[k] }))));
         ns.tprintf("Total spent: " + MONEY_FORMAT.format(totalSpent));
     }
     ns.tprintf(`Next purchase: ${nextPurchase.name} (${MONEY_FORMAT.format(nextPurchase.cost)})`);

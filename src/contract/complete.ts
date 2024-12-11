@@ -1,7 +1,7 @@
 /**
  * FIX: compression-02-LZ-decompression
  */
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 import { stockTrader01 } from "/contract/algorithm/algorithmic-stock-trader-01";
 import { stockTrader02 } from "/contract/algorithm/algorithmic-stock-trader-02";
@@ -63,7 +63,7 @@ export async function main(ns: NS) {
         const type = ns.codingcontract.getContractType(contract.file, contract.server);
         const data = ns.codingcontract.getData(contract.file, contract.server);
         if (ALGORITHMS[type]) {
-            const reward = ns.codingcontract.attempt(ALGORITHMS[type](data), contract.file, contract.server);
+            const reward = ns.codingcontract.attempt(ALGORITHMS[type](data), contract.file, contract.server, { returnReward: true });
             if (reward === "") {
                 failures.push({...contract, reward: reward});
             } else {
@@ -74,28 +74,32 @@ export async function main(ns: NS) {
 
     if (failures.length !== 0) {
         let displayLimit = Math.min(13, failures.length);
-        ns.printf("\n"+formatTable(failures.slice(0, displayLimit)));
-        ns.printf("Showing %s of %s failures", displayLimit, failures.length);
+        ns.tprintf(formatTable(failures.slice(0, displayLimit)));
+        ns.tprintf("Showing %s of %s failures", displayLimit, failures.length);
+        ns.tprintf("\n");
 
         const typeBucket = frequency(failures, "type");
         displayLimit = Math.min(8, Object.keys(typeBucket).length);
-        ns.printf("\n"+formatTable(Object.keys(typeBucket).map(k => ({ type: k, count: typeBucket[k], example: path(contracts.find(c=>c.type === k)) })).sort((a, b) => a.type.localeCompare(b.type)).slice(0, displayLimit)));
-        ns.printf("Showing %s of %s types", displayLimit, Object.keys(typeBucket).length);
+        ns.tprintf(formatTable(Object.keys(typeBucket).map(k => ({ type: k, count: typeBucket[k], example: path(contracts.find(c=>c.type === k)) })).sort((a, b) => a.type.localeCompare(b.type)).slice(0, displayLimit)));
+        ns.tprintf("Showing %s of %s types", displayLimit, Object.keys(typeBucket).length);
+        ns.tprintf("\n");
     }
 
     if (successes.length !== 0) {
         let displayLimit = Math.min(5, successes.length);
-        ns.printf("\n"+formatTable(successes.slice(0, displayLimit)));
-        ns.printf("Showing %s of %s successes", displayLimit, successes.length);
+        ns.tprintf(formatTable(successes.slice(0, displayLimit)));
+        ns.tprintf("Showing %s of %s successes", displayLimit, successes.length);
+        ns.tprintf("\n");
 
         const typeBucket = frequency(successes, "type");
         displayLimit = Math.min(3, Object.keys(typeBucket).length);
-        ns.printf("\n"+formatTable(Object.keys(typeBucket).map(k => ({ type: k, count: typeBucket[k]})).sort((a, b) => a.type.localeCompare(b.type)).slice(0, displayLimit)));
-        ns.printf("Showing %s of %s types", displayLimit, Object.keys(typeBucket).length);
+        ns.tprintf(formatTable(Object.keys(typeBucket).map(k => ({ type: k, count: typeBucket[k]})).sort((a, b) => a.type.localeCompare(b.type)).slice(0, displayLimit)));
+        ns.tprintf("Showing %s of %s types", displayLimit, Object.keys(typeBucket).length);
+        ns.tprintf("\n");
     }
 
     if (failures.length === 0 && successes.length === 0) {
-        ns.printf("No contracts attempted");
+        ns.tprintf("No contracts attempted");
     }
 }
 

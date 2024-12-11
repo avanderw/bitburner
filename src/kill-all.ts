@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import {NS} from "/lib/NetscriptDefinitions";
 
 export function autocomplete(data: any) {
     return [...data.servers];

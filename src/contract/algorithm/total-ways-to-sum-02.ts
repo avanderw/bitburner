@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     ns.tprintf("%s", totalWaysToSum([192, [1,2,3,4,8,9,11,12]]));

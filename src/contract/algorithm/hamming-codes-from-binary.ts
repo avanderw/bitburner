@@ -18,7 +18,7 @@
  * '00101100' -> '12'
  */
 
-import { NS } from "@ns";
+import {NS} from '/lib/NetscriptDefinitions';
 
 export function main(ns: NS): void {
     let binaryString = "00101100";

@@ -1,11 +1,10 @@
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function autocomplete(data: any) {
     return [...data.servers];
 }
 
 export async function main(ns: NS) {
-    ns.disableLog("ALL");
     const crackers = validCrackers(ns);
     const targets = traverseNet(ns).filter(s => !ns.hasRootAccess(s))
         .filter(s => ns.getServerRequiredHackingLevel(s) <= ns.getHackingLevel())
@@ -16,11 +15,8 @@ export async function main(ns: NS) {
             });
 
             ns.nuke(s);
-            ns.printf("💣 %s", s);
         });
-    if (traverseNet(ns).filter(s => !ns.hasRootAccess(s)).length === 0) {
-        ns.printf("No more servers to root.");
-    }
+    ns.tprintf(`Hacked ${targets.length} servers`);
 }
 
 function traverseNet(ns: NS): string[] {

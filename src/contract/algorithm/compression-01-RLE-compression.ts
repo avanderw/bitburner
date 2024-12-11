@@ -12,7 +12,7 @@
  *     zzzzzzzzzzzzzzzzzzz  ->  9z9z1z  (or 9z8z2z, etc.)
  */
 
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     ns.tprintf("%s", rle("TppMMMMMMMMAUUfDDDeebbbbbbbEEOSSffffffwYYAAAAAAAzzzzzzzzzzttDD7"));

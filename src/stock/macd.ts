@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import {NS} from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     const stocks:any[] = [];
@@ -17,7 +17,7 @@ export function main(ns: NS): void {
             macd: macd[macd.length - 1],
         });
     });
-    ns.tprintf("\n"+formatTable(stocks.sort((a, b) => a.macd - b.macd).reverse()));
+    ns.tprintf(formatTable(stocks.sort((a, b) => a.macd - b.macd).reverse()));
 }
 
 function MACDsignal(macd: number[]): string {

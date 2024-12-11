@@ -1,4 +1,4 @@
-import { NS } from "@ns";
+import {NS} from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     const stocks:any[] = [];
@@ -19,7 +19,7 @@ export function main(ns: NS): void {
     });
 
     stocks.sort((a, b) => a.rsi - b.rsi).reverse();
-    ns.tprintf("\n"+formatTable(stocks));
+    ns.tprintf(formatTable(stocks));
 }
 
 function calculateRSI(data: number[]): number[] {

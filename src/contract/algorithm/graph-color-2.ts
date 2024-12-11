@@ -11,7 +11,7 @@
  * Input: [3, [[0, 1], [0, 2], [1, 2]]]
  * Output: []
  */
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export async function main(ns: NS) {
     let data = [10, [[3, 8], [0, 4], [5, 7], [1, 5], [2, 7], [6, 7], [0, 5], [4, 7], [2, 8], [3, 4]]];

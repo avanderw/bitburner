@@ -24,7 +24,7 @@
  * 
  * Return the ciphertext as uppercase string.
  */
-import { NS } from "@ns";
+import { NS } from "/lib/NetscriptDefinitions";
 
 export function main(ns: NS): void {
     const data = ["ENTERLOGICSHIFTINBOXTABLE", "FLOWCHART"];
