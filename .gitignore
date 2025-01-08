@@ -1,6 +1,4 @@
-target/
+build/
 node_modules/
-.vscode
-.prettierrc
-.eslintrc.js
-package-lock.json
+dist/
+NetscriptDefinitions.d.ts
