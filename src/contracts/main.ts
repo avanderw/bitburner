@@ -1,6 +1,6 @@
 import { NS } from "@ns";
-import { ContractSolverRegistry } from "./ContractSolverRegistry";
-import { ContractScanner } from "./ContractScanner";
+import { ContractSolverRegistry } from "./lib/ContractSolverRegistry";
+import { ContractScanner } from "./lib/ContractScanner";
 import { TableFormatter } from "/lib/TableFormatter";
 
 // Main script

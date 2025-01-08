@@ -1,7 +1,7 @@
 import { NS } from "@ns";
 import { TableFormatter } from "/lib/TableFormatter";
-import { ContractSolverRegistry } from "./ContractSolverRegistry";
-import { ContractScanner } from "./ContractScanner";
+import { ContractSolverRegistry } from "./lib/ContractSolverRegistry";
+import { ContractScanner } from "./lib/ContractScanner";
 
 export async function main(ns: NS) {
     const numberFormatter = new Intl.NumberFormat("en-US", {
